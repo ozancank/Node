@@ -8,19 +8,19 @@ const routeHandler = (req, res) => {
   res.setHeader("Content-Type", "text/html");
   if (url === "/") {
     res.write(`
-  <html>
-    <head>
-      <title>Enter Message</title>
-    </head>
-    <body>
-      <form method="POST" action="/log">
-        <input type="text" name="message"/>
-        <button type="submit">Save</button>
-      </form>
-    </body>
-  </html>
-`);
-    return res.end();
+      <html>
+        <head>
+          <title>Enter Message</title>
+        </head>
+        <body>
+          <form method="POST" action="/log">
+            <input type="text" name="message"/>
+            <button type="submit">Save</button>
+          </form>
+        </body>
+      </html>
+    `);
+        return res.end();
   }
 
   if (url === "/log" && method === "POST") {

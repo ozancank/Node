@@ -1,13 +1,17 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
+const adminRoutes = require("./routes/admin");
+const userRoutes = require("./routes/user");
 
-app.get("/",(req,res)=>{
-    res.send("Hello world");
-})
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/admin", adminRoutes);
+app.use(userRoutes);
 
-app.get("/api/products",(req,res)=>{
-    res.send("product list");
-})
+app.use("/", (req, res, next) => {
+  console.log("loglama yapıldı...");
+  next();
+});
 
 app.listen(3000, () => {
   console.log("listening on port 3000");
