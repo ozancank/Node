@@ -6,6 +6,8 @@ const userRoutes = require('./routes/user');
 const path = require('path');
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/admin', adminRoutes);
 app.use(userRoutes);
 
