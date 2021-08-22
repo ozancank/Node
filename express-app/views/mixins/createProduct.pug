@@ -1,0 +1,16 @@
+mixin createProduct(product)
+  .col-4
+    .card.mt-3
+      img.card-img-top(src=`${product.image}` alt=`${product.description}`)
+      .card-body
+        h5.card-title
+          .a.text-decoration-none(href='#') #{product.name}
+        p.card-text.pt-2 #{product.description}
+      .card-footer
+        small.text-muted
+          i.fa.fa-lira-sign 
+          span  #{product.price}
+
+          a.btn.btn-secondary.btn-sm.float-end(href='#')
+            i.fa.fa-angle-double-right
+            span Details
