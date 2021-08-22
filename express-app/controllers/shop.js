@@ -1,28 +1,46 @@
 const Product = require('../models/product');
 
-exports.getProducts = (req, res, next) => {
+exports.getIndex = (req, res, next) => {
   const products = Product.getAll();
-  res.render('index', {
-    title: 'Home Page',
+  res.render('shop/index', {
+    title: 'Shopping',
     products: products,
     path: '/',
   });
 };
 
-exports.getAddProduct = (req, res, next) => {
-  res.render('add-product', {
-    title: 'Add Product',
-    path: '/admin/add-product',
+exports.getProducts = (req, res, next) => {
+  const products = Product.getAll();
+  res.render('shop/products', {
+    title: 'Home Page',
+    products: products,
+    path: '/products',
   });
 };
 
-exports.postAddProduct = (req, res, next) => {
-  const product = new Product(
-    req.body.name,
-    req.body.price,
-    req.body.imageUrl,
-    req.body.description
-  );
-  product.saveProduct();
+exports.getProduct = (req, res, next) => {
+  const productId = req.params.productid;
+  console.log(Product.getById(productId));
   res.redirect('/');
+};
+
+exports.getProductDetails = (req, res, next) => {
+  res.render('shop/details', {
+    title: 'Details',
+    path: '/details',
+  });
+};
+
+exports.getCart = (req, res, next) => {
+  res.render('shop/cart', {
+    title: 'Cart',
+    path: '/cart',
+  });
+};
+
+exports.getOrders = (req, res, next) => {
+  res.render('shop/orders', {
+    title: 'Orders',
+    path: '/orders',
+  });
 };
