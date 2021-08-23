@@ -18,6 +18,13 @@ block content
       .col-sm-10
         input#imageUrl.form-control(type='text' name='imageUrl')
     .form-group.row.mb-3
+      label.col-sm-2.form-label(for='categoryid') Category
+      .col-sm-10
+        select#categoryid.form-control(name='categoryid')
+          option(value="-1") Select Category 
+          each category in categories 
+            option(value=`${category.id}`) #{category.name}             
+    .form-group.row.mb-3
       label.col-sm-2.form-label(for='description') Description
       .col-sm-10
         textarea#description.form-control(name='description' cols="30" rows="10")
