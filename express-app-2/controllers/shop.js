@@ -2,15 +2,20 @@ const Product = require('../models/product');
 const Category = require('../models/category');
 
 exports.getIndex = (req, res, next) => {
-  const categories = Category.getAll();
-  Product.getAll()
-    .then((products) => {
-      res.render('shop/index', {
-        title: 'Shopping',
-        products: products[0],
-        categories: categories,
-        path: '/',
-      });
+  Category.getAll()
+    .then((categories) => {
+      Product.getAll()
+        .then((products) => {
+          res.render('shop/index', {
+            title: 'Shopping',
+            path: '/',
+            products: products[0],
+            categories: categories[0],
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       console.log(err);
@@ -18,15 +23,20 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  const categories = Category.getAll();
-  Product.getAll()
-    .then((products) => {
-      res.render('shop/products', {
-        title: 'Products',
-        products: products[0],
-        categories: categories,
-        path: '/products',
-      });
+  Category.getAll()
+    .then((categories) => {
+      Product.getAll()
+        .then((products) => {
+          res.render('shop/products', {
+            title: 'Products',
+            products: products[0],
+            categories: categories[0],
+            path: '/products',
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       console.log(err);
@@ -35,31 +45,39 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProductsByCategoryId = (req, res, next) => {
   const categoryid = req.params.categoryid;
-  const products = Product.getProductsByCategoryId(categoryid);
-  const categories = Category.getAll();
-  res.render('shop/products', {
-    title: 'Home Page',
-    products: products,
-    categories: categories,
-    selectedCategory: categoryid,
-    path: '/products',
-  });
+  Category.getAll()
+    .then((categories) => {
+      Product.getProductsByCategoryId(categoryid)
+        .then((products) => {
+          res.render('shop/products', {
+            title: 'Products',
+            path: '/products',
+            products: products[0],
+            categories: categories[0],
+            selectedCategory: categoryid,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getProduct = (req, res, next) => {
-  const product = Product.getById(req.params.productid);
-  res.render('shop/product-detail', {
-    title: product.name,
-    product: product,
-    path: '/products',
-  });
-};
-
-exports.getProductDetails = (req, res, next) => {
-  res.render('shop/details', {
-    title: 'Details',
-    path: '/details',
-  });
+  const product = Product.getById(req.params.productid)
+    .then((product) => {
+      res.render('shop/product-detail', {
+        title: product[0][0].name,
+        product: product[0][0],
+        path: '/products',
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getCart = (req, res, next) => {

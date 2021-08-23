@@ -1,20 +1,4 @@
-const categories = [
-  {
-    id: '1',
-    name: 'Telefon',
-    description: 'Telefon ürünleri',
-  },
-  {
-    id: '2',
-    name: 'Bilgisayar',
-    description: 'Bilgisayar ürünleri',
-  },
-  {
-    id: '3',
-    name: 'Beyaz eşya',
-    description: 'Beya eşya ürünleri',
-  },
-];
+const connection = require('../utility/database');
 
 module.exports = class Category {
   constructor(name, description) {
@@ -23,25 +7,33 @@ module.exports = class Category {
   }
 
   saveCategory() {
-    categories.push(this);
+    return connection.execute(
+      'INSERT INTO categories (name, description) VALUES (?, ?)',
+      [this.name, this.description]
+    );
   }
 
   static getAll() {
-    return categories;
+    return connection.execute(`SELECT * FROM categories`);
   }
 
   static getById(id) {
-    return categories.find((i) => i.id === id);
+    return connection.execute(
+      'SELECT * FROM categories WHERE categories.id=?',
+      [id]
+    );
   }
 
   static update(category) {
-    const index = categories.findIndex((i) => i.id === category.id);
-    categories[index].name = category.name;
-    categories[index].description = category.description;
+    return connection.execute(
+      'UPDATE categories SET categories.name=?, categories.description=? WHERE categories.id=?',
+      [category.name, category.description, category.id]
+    );
   }
 
   static deleteById(id) {
-    const index = categories.findIndex((i) => i.id === id);
-    categories.splice(index, 1);
+    return connection.execute('DELETE FROM categories WHERE categories.id=?', [
+      id,
+    ]);
   }
 };
