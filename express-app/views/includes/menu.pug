@@ -1,4 +1,4 @@
-.list-group    
-    a.list-group-item.list-group-item-action(href='') Category 1
-    a.list-group-item.list-group-item-action(href='') Category 2
-    a.list-group-item.list-group-item-action(href='') Category 3
+.list-group
+    if categories.length > 0
+        each category in categories 
+            a.list-group-item.list-group-item-action(href=`/categories/${category.id}`) #{category.name}
