@@ -4,23 +4,24 @@ block styles
   link(rel="stylesheet" href="/css/forms.css")
 
 block content
-  form(action='edit-product' method='POST')
+  form(action='/admin/edit-product' method='POST')
+    input(type="hidden" name="id" value=`${product.id}`)
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='name') Product Name
       .col-sm-10
-        input#name.form-control(type='text' name='name')
+        input#name.form-control(type='text' name='name' value=`${product.name}`)
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='price') Price
       .col-sm-10
-        input#price.form-control(type='text' name='price')
+        input#price.form-control(type='text' name='price' value=`${product.price}`)
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='imageUrl') Image
       .col-sm-10
-        input#imageUrl.form-control(type='text' name='imageUrl')
+        input#imageUrl.form-control(type='text' name='imageUrl' value=`${product.imageUrl}`)
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='description') Description
       .col-sm-10
-        input#description.form-control(type='text' name='description')
+        textarea#description.form-control(name='description' cols="30" rows="10") #{product.description}
     .form-group.row.mb-3
       .col-sm-10.offset-sm-2
         button.btn.btn-primary(type='submit') Save Product

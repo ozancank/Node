@@ -4,7 +4,7 @@ block styles
   link(rel="stylesheet" href="/css/forms.css")
 
 block content
-  form(action='add-product' method='POST')
+  form(action='/admin/add-product' method='POST')
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='name') Product Name
       .col-sm-10
@@ -20,7 +20,7 @@ block content
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='description') Description
       .col-sm-10
-        input#description.form-control(type='text' name='description')
+        textarea#description.form-control(name='description' cols="30" rows="10")
     .form-group.row.mb-3
       .col-sm-10.offset-sm-2
         button.btn.btn-primary(type='submit') Save Product
