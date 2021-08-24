@@ -24,7 +24,7 @@ block content
 
 
                                 form(action="/admin/delete-product" method="POST")
-                                    input(type="hidden" name="productid" value=`${product.id}`)
+                                    input(type="hidden" name="productId" value=`${product.id}`)
                                     a.btn.btn-primary.btn-sm.me-2(href=`/admin/edit-product/${product.id}`) Edit
                                     button.btn.btn-danger.btn-sm(type="submit") Delete
     else 

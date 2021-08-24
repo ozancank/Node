@@ -19,12 +19,12 @@ block content
       .col-sm-10
         input#imageUrl.form-control(type='text' name='imageUrl' value=`${product.imageUrl}`)
     .form-group.row.mb-3
-      label.col-sm-2.form-label(for='categoryid') Category
+      label.col-sm-2.form-label(for='categoryId') Category
       .col-sm-10
-        select#categoryid.form-control(name='categoryid')
+        select#categoryId.form-control(name='categoryId')
           option(value="-1") Select Category 
           each category in categories 
-            option(value=`${category.id}` selected=(category.id === product.categoryid)) #{category.name}      
+            option(value=`${category.id}` selected=(category.id === product.categoryId)) #{category.name}      
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='description') Description
       .col-sm-10

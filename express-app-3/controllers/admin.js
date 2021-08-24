@@ -17,9 +17,12 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
-    title: 'New Product',
-    path: '/admin/add-product',
+  Category.findAll().then((categories) => {
+    res.render('admin/add-product', {
+      title: 'New Product',
+      path: '/admin/add-product',
+      categories: categories,
+    });
   });
 };
 
@@ -27,36 +30,17 @@ exports.postAddProduct = (req, res, next) => {
   const name = req.body.name;
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
-  //const categoryid = req.body.categoryid;
+  const categoryId = req.body.categoryId;
   const description = req.body.description;
 
-  /*
   Product.create({
     name: name,
     price: price,
     imageUrl: imageUrl,
     description: description,
+    categoryId: categoryId,
   })
-    .then((result) => {
-      console.log(result);
-      res.redirect('/');
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-    */
-
-  const prd = Product.build({
-    name: name,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  });
-
-  prd
-    .save()
-    .then((result) => {
-      console.log(result);
+    .then(() => {
       res.redirect('/');
     })
     .catch((err) => {
@@ -65,7 +49,7 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
-  Product.findByPk(req.params.productid)
+  Product.findByPk(req.params.productId)
     .then((product) => {
       if (!product) {
         return res.redirect('/');
@@ -93,7 +77,7 @@ exports.postEditProduct = (req, res, next) => {
   const name = req.body.name;
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
-  //const categoryid = req.body.categoryid;
+  const categoryId = req.body.categoryId;
   const description = req.body.description;
   Product.findByPk(id)
     .then((product) => {
@@ -101,6 +85,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = price;
       product.imageUrl = imageUrl;
       product.description = description;
+      product.categoryId = categoryId;
       return product.save();
     })
     .then(() => {
@@ -112,7 +97,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-  const id = req.body.productid;
+  const id = req.body.productId;
   Product.findByPk(id)
     .then((product) => {
       return product.destroy();

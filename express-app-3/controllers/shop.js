@@ -48,22 +48,22 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getProductsByCategoryId = (req, res, next) => {
-  const categoryid = req.params.categoryid;
-  Category.getAll()
+  const categoryId = parseInt(req.params.categoryId);
+  const model = [];
+  Category.findAll()
     .then((categories) => {
-      Product.getProductsByCategoryId(categoryid)
-        .then((products) => {
-          res.render('shop/products', {
-            title: 'Products',
-            path: '/products',
-            products: products[0],
-            categories: categories[0],
-            selectedCategory: categoryid,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      model.categories = categories;
+      const category = categories.find((i) => i.id === categoryId);
+      return category.getProducts();
+    })
+    .then((products) => {
+      res.render('shop/products', {
+        title: 'Products',
+        path: '/products',
+        products: products,
+        categories: model.categories,
+        selectedCategory: categoryId,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -72,21 +72,31 @@ exports.getProductsByCategoryId = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   Product.findAll({
-    attributes: ['id', 'name', 'price', 'imageUrl', 'description'],
-    where: { id: req.params.productid },
+    attributes: [
+      'id',
+      'name',
+      'price',
+      'imageUrl',
+      'description',
+      'categoryId',
+    ],
+    where: { id: req.params.productId },
   })
     .then((product) => {
-      res.render('shop/product-detail', {
-        title: product[0].name,
-        product: product[0],
-        path: '/products',
+      Category.findByPk(product[0].categoryId).then((category) => {
+        return res.render('shop/product-detail', {
+          title: product[0].name,
+          path: '/products',
+          product: product[0],
+          category: category,
+        });
       });
     })
     .catch((err) => {
       console.log(err);
     });
   /*
-  Product.findByPk(req.params.productid)
+  Product.findByPk(req.params.productId)
     .then((product) => {
       res.render('shop/product-detail', {
         title: product.name,
