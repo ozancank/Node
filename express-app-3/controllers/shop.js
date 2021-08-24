@@ -2,15 +2,17 @@ const Product = require('../models/product');
 const Category = require('../models/category');
 
 exports.getIndex = (req, res, next) => {
-  Category.getAll()
-    .then((categories) => {
-      Product.getAll()
-        .then((products) => {
+  Product.findAll({
+    attributes: ['id', 'name', 'price', 'imageUrl'],
+  })
+    .then((products) => {
+      Category.findAll()
+        .then((categories) => {
           res.render('shop/index', {
             title: 'Shopping',
             path: '/',
-            products: products[0],
-            categories: categories[0],
+            products: products,
+            categories: categories,
           });
         })
         .catch((err) => {
@@ -23,15 +25,17 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Category.getAll()
-    .then((categories) => {
-      Product.getAll()
-        .then((products) => {
+  Product.findAll({
+    attributes: ['id', 'name', 'price', 'imageUrl'],
+  })
+    .then((products) => {
+      Category.findAll()
+        .then((categories) => {
           res.render('shop/products', {
             title: 'Products',
-            products: products[0],
-            categories: categories[0],
             path: '/products',
+            products: products,
+            categories: categories,
           });
         })
         .catch((err) => {
@@ -67,17 +71,33 @@ exports.getProductsByCategoryId = (req, res, next) => {
 };
 
 exports.getProduct = (req, res, next) => {
-  const product = Product.getById(req.params.productid)
+  Product.findAll({
+    attributes: ['id', 'name', 'price', 'imageUrl', 'description'],
+    where: { id: req.params.productid },
+  })
     .then((product) => {
       res.render('shop/product-detail', {
-        title: product[0][0].name,
-        product: product[0][0],
+        title: product[0].name,
+        product: product[0],
         path: '/products',
       });
     })
     .catch((err) => {
       console.log(err);
     });
+  /*
+  Product.findByPk(req.params.productid)
+    .then((product) => {
+      res.render('shop/product-detail', {
+        title: product.name,
+        product: product,
+        path: '/products',
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+    */
 };
 
 exports.getCart = (req, res, next) => {
