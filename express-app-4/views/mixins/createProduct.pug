@@ -1,0 +1,17 @@
+mixin createProduct(product)
+  .col-4
+    .card.mt-3
+      img.card-img-top(src=`${product.imageUrl}` alt=`${product.description}`)
+      .card-body
+        h5.card-title
+          a.text-decoration-none(href=`/products/${product.id}`) #{product.name}
+        small.text-muted
+          i.fa.fa-lira-sign 
+          span  #{product.price}
+      .card-footer.text-center
+        a.btn.btn-outline-primary.btn-sm(href=`/products/${product.id}`)
+          span Details
+        form(action="/cart" method="POST")
+          input(type="hidden" name="productId" value=`${product.id}`)
+          button.btn.btn-outline-primary.btn-sm.ms-3(type='submit')
+            span Add to Cart

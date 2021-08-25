@@ -187,18 +187,15 @@ exports.postCartItemDelete = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders({ include: ['products'] })
-    .then((orders) => {
-      res.render('shop/orders', {
+  req.user.getOrders({ include: ['products'] }).then((orders) => {
+    res
+      .render('shop/orders', {
         title: 'Orders',
         path: '/orders',
         orders: orders,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      })
+      .catch((err) => onsole.log(err));
+  });
 };
 
 exports.postOrder = (req, res, next) => {
