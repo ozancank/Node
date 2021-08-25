@@ -10,8 +10,8 @@ mixin createProduct(product)
           span  #{product.price}
       .card-footer.text-center
         a.btn.btn-outline-primary.btn-sm(href=`/products/${product.id}`)
-          i.fa.fa-angle-double-right
           span Details
-        a.btn.btn-outline-primary.btn-sm.ms-3(href='#')
-          i.fa.fa-angle-double-right
-          span Add to Cart
+        form(action="/cart" method="POST")
+          input(type="hidden" name="productId" value=`${product.id}`)
+          button.btn.btn-outline-primary.btn-sm.ms-3(type='submit')
+            span Add to Cart

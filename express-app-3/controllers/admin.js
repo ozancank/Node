@@ -32,14 +32,16 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const categoryId = req.body.categoryId;
   const description = req.body.description;
+  const user = req.user;
 
-  Product.create({
-    name: name,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-    categoryId: categoryId,
-  })
+  user
+    .createProduct({
+      name: name,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+      categoryId: categoryId,
+    })
     .then(() => {
       res.redirect('/');
     })
@@ -79,6 +81,7 @@ exports.postEditProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const categoryId = req.body.categoryId;
   const description = req.body.description;
+
   Product.findByPk(id)
     .then((product) => {
       product.name = name;
