@@ -1,23 +1,15 @@
 const Product = require('../models/product');
-const Category = require('../models/category');
+//const Category = require('../models/category');
 
 exports.getIndex = (req, res, next) => {
-  Product.findAll({
-    attributes: ['id', 'name', 'price', 'imageUrl'],
-  })
+  Product.findAll()
     .then((products) => {
-      Category.findAll()
-        .then((categories) => {
-          res.render('shop/index', {
-            title: 'Shopping',
-            path: '/',
-            products: products,
-            categories: categories,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      res.render('shop/index', {
+        title: 'Shopping',
+        path: '/',
+        products: products,
+        //categories: categories,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -25,22 +17,14 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.findAll({
-    attributes: ['id', 'name', 'price', 'imageUrl'],
-  })
+  Product.findAll()
     .then((products) => {
-      Category.findAll()
-        .then((categories) => {
-          res.render('shop/products', {
-            title: 'Products',
-            path: '/products',
-            products: products,
-            categories: categories,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      res.render('shop/products', {
+        title: 'Products',
+        path: '/products',
+        products: products,
+        //categories: categories,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -71,43 +55,18 @@ exports.getProductsByCategoryId = (req, res, next) => {
 };
 
 exports.getProduct = (req, res, next) => {
-  Product.findAll({
-    attributes: [
-      'id',
-      'name',
-      'price',
-      'imageUrl',
-      'description',
-      'categoryId',
-    ],
-    where: { id: req.params.productId },
-  })
+  Product.findById(req.params.productId)
     .then((product) => {
-      Category.findByPk(product[0].categoryId).then((category) => {
-        return res.render('shop/product-detail', {
-          title: product[0].name,
-          path: '/products',
-          product: product[0],
-          category: category,
-        });
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  /*
-  Product.findByPk(req.params.productId)
-    .then((product) => {
-      res.render('shop/product-detail', {
+      return res.render('shop/product-detail', {
         title: product.name,
-        product: product,
         path: '/products',
+        product: product,
+        //category: category,
       });
     })
     .catch((err) => {
       console.log(err);
     });
-    */
 };
 
 exports.getCart = (req, res, next) => {
