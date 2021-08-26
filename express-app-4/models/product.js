@@ -4,11 +4,15 @@ const mongodb = require('mongodb');
 const collection = 'products';
 
 class Product {
-  constructor(name, price, description, imageUrl, id, userId) {
+  constructor(name, price, description, imageUrl, categories, id, userId) {
     this.name = name;
     this.price = price;
     this.description = description;
     this.imageUrl = imageUrl;
+    this.categories =
+      categories && !Array.isArray(categories)
+        ? Array.of(categories)
+        : categories;
     this._id = id ? mongodb.ObjectId(id) : null;
     this.user = userId;
   }
@@ -81,6 +85,18 @@ class Product {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  static findByCategoryId(categoryId) {
+    const db = getDb();
+    return db
+      .collection(collection)
+      .find({ categories: categoryId })
+      .toArray()
+      .then((products) => {
+        return products;
+      })
+      .catch((err) => console.log(err));
   }
 }
 

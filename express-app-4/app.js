@@ -38,8 +38,7 @@ mongoConnect(() => {
       }
       return user;
     })
-    .then((user) => {
-      console.log(user);
+    .then(() => {
       app.listen(3000);
     })
     .catch((err) => {

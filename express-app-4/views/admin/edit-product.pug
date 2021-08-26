@@ -18,13 +18,13 @@ block content
       label.col-sm-2.form-label(for='imageUrl') Image
       .col-sm-10
         input#imageUrl.form-control(type='text' name='imageUrl' value=`${product.imageUrl}`)
-    //- .form-group.row.mb-3
-    //-   label.col-sm-2.form-label(for='categoryId') Category
-    //-   .col-sm-10
-    //-     select#categoryId.form-control(name='categoryId')
-    //-       option(value="-1") Select Category 
-    //-       each category in categories 
-    //-         option(value=`${category.id}` selected=(category.id === product.categoryId)) #{category.name}      
+    .form-group.row.mb-3
+      label.col-sm-2.form-label(for='categoryId') Category
+      .col-sm-10
+        each category in categories 
+          .form-check 
+            input.form-check-input(type="checkbox" name="categoryIds" value=`${category._id}` checked=category.selected)
+            label.form-check-label #{category.name}
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='description') Description
       .col-sm-10

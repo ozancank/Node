@@ -18,17 +18,25 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
-    title: 'New Product',
-    path: '/admin/add-product',
-  });
+  Category.findAll()
+    .then((categories) => {
+      console.log(categories);
+      res.render('admin/add-product', {
+        title: 'New Product',
+        path: '/admin/add-product',
+        categories: categories,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.postAddProduct = (req, res, next) => {
   const name = req.body.name;
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
-  //const categoryId = req.body.categoryId;
+  const categories = req.body.categoryIds;
   const description = req.body.description;
 
   const product = new Product(
@@ -36,6 +44,7 @@ exports.postAddProduct = (req, res, next) => {
     price,
     description,
     imageUrl,
+    categories,
     null,
     req.user._id
   );
@@ -53,11 +62,22 @@ exports.postAddProduct = (req, res, next) => {
 exports.getEditProduct = (req, res, next) => {
   Product.findById(req.params.productId)
     .then((product) => {
-      res.render('admin/edit-product', {
-        title: 'Edit Product',
-        path: '/admin/edit-product',
-        product: product,
-        //categories: categories,
+      Category.findAll().then((categories) => {
+        categories = categories.map((category) => {
+          if (product.categories)
+            product.categories.find((item) => {
+              if (item === category._id.toString()) {
+                category.selected = true;
+              }
+            });
+          return category;
+        });
+        return res.render('admin/edit-product', {
+          title: 'Edit Product',
+          path: '/admin/edit-product',
+          product: product,
+          categories: categories,
+        });
       });
     })
     .catch((err) => {
@@ -70,7 +90,7 @@ exports.postEditProduct = (req, res, next) => {
   const name = req.body.name;
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
-  //const categoryId = req.body.categoryId;
+  const categories = req.body.categoryIds;
   const description = req.body.description;
 
   const product = new Product(
@@ -78,6 +98,7 @@ exports.postEditProduct = (req, res, next) => {
     price,
     description,
     imageUrl,
+    categories,
     id,
     req.user._id
   );
@@ -130,12 +151,7 @@ exports.postAddCategory = (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
 
-  const category = new Category(
-    name,
-    description,
-    null,
-    req.user._id
-  );
+  const category = new Category(name, description, null, req.user._id);
 
   category
     .save()
@@ -166,12 +182,7 @@ exports.postEditCategory = (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
 
-  const category = new Category(
-    name,
-    description,
-    id,
-    req.user._id
-  );
+  const category = new Category(name, description, id, req.user._id);
 
   category
     .save()
