@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const Category = require('../models/category');
+//const Category = require('../models/category');
 
 exports.getProducts = (req, res, next) => {
   Product.findAll()
@@ -17,12 +17,9 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getAddProduct = (req, res, next) => {
-  Category.findAll().then((categories) => {
-    res.render('admin/add-product', {
-      title: 'New Product',
-      path: '/admin/add-product',
-      categories: categories,
-    });
+  res.render('admin/add-product', {
+    title: 'New Product',
+    path: '/admin/add-product',
   });
 };
 
@@ -30,20 +27,15 @@ exports.postAddProduct = (req, res, next) => {
   const name = req.body.name;
   const price = req.body.price;
   const imageUrl = req.body.imageUrl;
-  const categoryId = req.body.categoryId;
+  //const categoryId = req.body.categoryId;
   const description = req.body.description;
-  const user = req.user;
 
-  user
-    .createProduct({
-      name: name,
-      price: price,
-      imageUrl: imageUrl,
-      description: description,
-      categoryId: categoryId,
-    })
+  const product = new Product(name, price, description, imageUrl);
+
+  product
+    .save()
     .then(() => {
-      res.redirect('/');
+      res.redirect('/admin/products');
     })
     .catch((err) => {
       console.log(err);
@@ -51,23 +43,14 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
-  Product.findByPk(req.params.productId)
-    .then((product) => {
-      if (!product) {
-        return res.redirect('/');
-      }
-      Category.findAll()
-        .then((categories) => {
-          res.render('admin/edit-product', {
-            title: 'Edit Product',
-            path: '/admin/edit-product',
-            product: product,
-            categories: categories,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  Product.findById(req.params.productId)
+    .then((products) => {
+      res.render('admin/edit-product', {
+        title: 'Edit Product',
+        path: '/admin/edit-product',
+        product: products[0],
+        //categories: categories,
+      });
     })
     .catch((err) => {
       console.log(err);
