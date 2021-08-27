@@ -1,11 +1,15 @@
 const Product = require('../models/product');
 const Category = require('../models/category');
+const product = require('../models/product');
 
 exports.getIndex = (req, res, next) => {
-  Product.findAll()
+  Product.find()
     .then((products) => {
-      Category.findAll().then((categories) => {
-        return res.render('shop/index', {
+      return products;
+    })
+    .then((products) => {
+      Category.find().then((categories) => {
+        res.render('shop/index', {
           title: 'Shopping',
           path: '/',
           products: products,
@@ -13,16 +17,17 @@ exports.getIndex = (req, res, next) => {
         });
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  Product.find()
     .then((products) => {
-      Category.findAll().then((categories) => {
-        return res.render('shop/products', {
+      return products;
+    })
+    .then((products) => {
+      Category.find().then((categories) => {
+        res.render('shop/products', {
           title: 'Products',
           path: '/products',
           products: products,
@@ -30,18 +35,19 @@ exports.getProducts = (req, res, next) => {
         });
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.getProductsByCategoryId = (req, res, next) => {
   const categoryId = req.params.categoryId;
   const model = [];
-  Category.findAll()
+
+  Category.find()
     .then((categories) => {
       model.categories = categories;
-      return Product.findByCategoryId(categoryId);
+      return Product.find({
+        categories: categoryId,
+      });
     })
     .then((products) => {
       res.render('shop/products', {
@@ -52,34 +58,36 @@ exports.getProductsByCategoryId = (req, res, next) => {
         selectedCategory: categoryId,
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.getProduct = (req, res, next) => {
   Product.findById(req.params.productId)
     .then((product) => {
-      return res.render('shop/product-detail', {
-        title: product.name,
-        path: '/products',
-        product: product,
-        //category: category,
+      return product;
+    })
+    .then((product) => {
+      Category.find({ _id: product.categories }).then((categories) => {
+        res.render('shop/product-detail', {
+          title: product.name,
+          path: '/products',
+          product: product,
+          categories: categories,
+        });
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.getCart = (req, res, next) => {
   req.user
-    .getCart()
-    .then((products) => {
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then((user) => {
       res.render('shop/cart', {
         title: 'Cart',
         path: '/cart',
-        products: products,
+        products: user.cart.items,
       });
     })
     .catch((err) => {

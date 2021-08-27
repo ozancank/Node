@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
-const mongoConnect = require('./utility/database').mongoConnect;
+const mongoose = require('mongoose');
+
+const passwd = require('./passwd');
 const User = require('./models/user');
 const errorController = require('./controllers/error');
 const adminRoutes = require('./routes/admin');
@@ -14,9 +16,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findByName('ozancan')
+  User.findOne({name:'ozancan'})
     .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch((err) => {
@@ -29,19 +31,28 @@ app.use(userRoutes);
 
 app.use(errorController.get404Page);
 
-mongoConnect(() => {
-  User.findByName('ozancan')
-    .then((user) => {
-      if (!user) {
-        user = new User('ozancan', 'ozan@mail.com');
-        return user.save();
-      }
-      return user;
-    })
-    .then(() => {
-      app.listen(3000);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
+mongoose
+  .connect(
+    `mongodb+srv://ozancan1:${passwd}@cluster0.afkna.mongodb.net/node-app-orm?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    console.log('connected to mongodb');
+    User.findOne({ name: 'ozancan' })
+      .then((user) => {
+        if (!user) {
+          user = new User({
+            name: 'ozancan',
+            email: 'ozan@mail.com',
+            cart: { items: [] },
+          });
+          return user.save();
+        }
+        return user;
+      })
+      .then(() => {
+        app.listen(3000);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
