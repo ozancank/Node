@@ -82,7 +82,6 @@ exports.getProduct = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user
     .populate('cart.items.productId')
-    .execPopulate()
     .then((user) => {
       res.render('shop/cart', {
         title: 'Cart',
@@ -90,9 +89,7 @@ exports.getCart = (req, res, next) => {
         products: user.cart.items,
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.postCart = (req, res, next) => {
