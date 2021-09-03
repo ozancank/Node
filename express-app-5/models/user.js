@@ -4,6 +4,10 @@ const Product = require('./product');
 const userSchema = mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
+  password: { type: String, require: true },
+  resetToken: String,
+  resetTokenExpiration: Date,
+  isAdmin: { type: Boolean, default: false },
   cart: {
     items: [
       {
@@ -46,7 +50,6 @@ userSchema.methods.addToCart = function (product) {
   const index = this.cart.items.findIndex((cp) => {
     return cp.productId.toString() === product._id.toString();
   });
-  console.log(index);
   const updatedCartItems = [...this.cart.items];
   let itemQuantity = 1;
 
@@ -54,7 +57,6 @@ userSchema.methods.addToCart = function (product) {
     itemQuantity = this.cart.items[index].quantity + 1;
     updatedCartItems[index].quantity = itemQuantity;
   } else {
-    console.log(1);
     updatedCartItems.push({
       productId: product._id,
       quantity: itemQuantity,

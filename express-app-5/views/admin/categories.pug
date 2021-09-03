@@ -21,6 +21,7 @@ block content
                             td #{category.description}
                             td 
                                 form(action="/admin/delete-category" method="POST")
+                                    input(type="hidden" name="_csrf" value=`${csrfToken}`)
                                     input(type="hidden" name="categoryId" value=`${category._id}`)
                                     a.btn.btn-primary.btn-sm.me-2(href=`/admin/edit-category/${category._id}`) Edit
                                     button.btn.btn-danger.btn-sm(type="submit") Delete

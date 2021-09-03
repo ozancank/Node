@@ -14,6 +14,7 @@ block content
                     th(style="width: 100px;") Image
                     th Product Name 
                     th(style="width: 150px;") Price 
+                    th User
                     th(style="width: 133px;") 
                 tbody 
                     each product in products
@@ -22,10 +23,10 @@ block content
                                 img(src=`${product.imageUrl}` width="80")
                             td #{product.name}
                             td #{product.price} TL 
+                            td #{product.userId.name}
                             td 
-
-
                                 form(action="/admin/delete-product" method="POST")
+                                    input(type="hidden" name="_csrf" value=`${csrfToken}`)
                                     input(type="hidden" name="productId" value=`${product._id}`)
                                     a.btn.btn-primary.btn-sm.me-2(href=`/admin/edit-product/${product._id}`) Edit
                                     button.btn.btn-danger.btn-sm(type="submit") Delete

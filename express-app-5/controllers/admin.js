@@ -4,8 +4,8 @@ const { populate } = require('../models/product');
 
 //Product
 exports.getProducts = (req, res, next) => {
-  Product.find()
-    //.populate('userId', 'name')
+  Product.find({ userId: req.user._id })
+    .populate('userId', 'name -_id')
     .select('name price imageUrl')
     .then((products) => {
       res.render('admin/products', {
@@ -57,9 +57,12 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
-  Product.findById(req.params.productId)
+  Product.findOne({ _id: req.params.productId, userId: req.user._id })
     //.populate('categories')
     .then((product) => {
+      if (!product) {
+        return res.redirect('/');
+      }
       return product;
     })
     .then((product) => {
@@ -96,7 +99,7 @@ exports.postEditProduct = (req, res, next) => {
   const categoryIds = req.body.categoryIds;
 
   Product.updateOne(
-    { _id: id },
+    { _id: id, userId: req.user._id },
     {
       $set: {
         name: name,
@@ -115,8 +118,11 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const id = req.body.productId;
-  Product.findByIdAndRemove({ _id: id })
-    .then(() => {
+  Product.deleteOne({ _id: id, userId: req.user._id })
+    .then((result) => {
+      if (result.deletedCount === 0) {
+        return res.redirect('/');
+      }
       res.redirect('/admin/products?action=delete');
     })
     .catch((err) => {

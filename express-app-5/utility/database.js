@@ -6,7 +6,7 @@ let _db;
 
 const mongoConnect = (callback) => {
   MongoClient.connect(
-    `mongodb+srv://ozancan1:${passwd}@cluster0.afkna.mongodb.net/node-app?retryWrites=true&w=majority`
+    `mongodb+srv://ozancan1:${passwd.mongoDbAtlas}@cluster0.afkna.mongodb.net/node-app-orm?retryWrites=true&w=majority`
   )
     .then((client) => {
       console.log('connected');
