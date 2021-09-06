@@ -15,9 +15,7 @@ exports.getProducts = (req, res, next) => {
         action: req.query.action,
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.getAddProduct = (req, res, next) => {
@@ -85,9 +83,7 @@ exports.getEditProduct = (req, res, next) => {
         });
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -125,9 +121,7 @@ exports.postDeleteProduct = (req, res, next) => {
       }
       res.redirect('/admin/products?action=delete');
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 //Category

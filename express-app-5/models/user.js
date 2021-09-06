@@ -41,9 +41,7 @@ userSchema.methods.getCart = function () {
         };
       });
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 userSchema.methods.addToCart = function (product) {

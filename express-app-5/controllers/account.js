@@ -70,7 +70,7 @@ exports.postRegister = (req, res, next) => {
         req.session.errorMessage =
           'Bu mail adresi ile daha önce kayıt olunmuş.';
         req.session.save(function (err) {
-          console.log(err);
+          if (err) console.log(err);
           return res.redirect('/register');
         });
       }
@@ -106,83 +106,80 @@ exports.getReset = (req, res, next) => {
   delete req.session.errorMessage;
 
   res.render('account/reset', {
-      path: '/reset-password',
-      title: 'Reset Password',
-      errorMessage: errorMessage
+    path: '/reset-password',
+    title: 'Reset Password',
+    errorMessage: errorMessage,
   });
-}
+};
 
 exports.postReset = (req, res, next) => {
-
   const email = req.body.email;
 
   crypto.randomBytes(32, (err, buffer) => {
-      if (err) {
-          console.log(err);
-          return res.redirect('/reset-password');
-      }
-      const token = buffer.toString('hex');
+    if (err) {
+      console.log(err);
+      return res.redirect('/reset-password');
+    }
+    const token = buffer.toString('hex');
 
-      User.findOne({ email: email })
-          .then(user => {
-              if (!user) {
-                  req.session.errorMessage = 'mail adresi bulunamadı.';
-                  req.session.save(function (err) {
-                      console.log(err);
-                      return res.redirect('/reset-password');
-                  })
-              }
-              user.resetToken = token;
-              user.resetTokenExpiration = Date.now() + 3600000;
+    User.findOne({ email: email })
+      .then((user) => {
+        if (!user) {
+          req.session.errorMessage = 'mail adresi bulunamadı.';
+          req.session.save(function (err) {
+            if (err) console.log(err);
+            return res.redirect('/reset-password');
+          });
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
 
-              return user.save();
-          }).then(result => {
-              res.redirect('/');
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect('/');
 
-              const msg = {
-                  to: email,
-                  from: 'info@ozancank.site',
-                  subject: 'Parola Reset',
-                  html: `
+        const msg = {
+          to: email,
+          from: 'info@ozancank.site',
+          subject: 'Parola Reset',
+          html: `
                   
                       <p>Parolanızı güncellemek için aşağıdaki linke tıklayınız.</p>
                       <p>
                           <a href="http://localhost:3000/reset-password/${token}">reset password </a>
                       </p>
                   `,
-              };
-              sgMail.send(msg);
-
-          }).catch(err => { console.log(err) });
-
+        };
+        sgMail.send(msg);
+      })
+      .catch((err) => console.log(err));
   });
-
-}
-
+};
 
 exports.getNewPassword = (req, res, next) => {
-
   var errorMessage = req.session.errorMessage;
   delete req.session.errorMessage;
 
   const token = req.params.token;
 
   User.findOne({
-      resetToken: token, resetTokenExpiration: {
-          $gt: Date.now()
-      }
-  }).then(user => {
-      res.render('account/new-password', {
-          path: '/new-password',
-          title: 'New Password',
-          errorMessage: errorMessage,
-          userId: user._id.toString(),
-          passwordToken: token
-      });
-  }).catch(err => {
-      console.log(err);
+    resetToken: token,
+    resetTokenExpiration: {
+      $gt: Date.now(),
+    },
   })
-}
+    .then((user) => {
+      res.render('account/new-password', {
+        path: '/new-password',
+        title: 'New Password',
+        errorMessage: errorMessage,
+        userId: user._id.toString(),
+        passwordToken: token,
+      });
+    })
+    .catch((err) => console.log(err));
+};
 
 exports.postNewPassword = (req, res, next) => {
   const newPassword = req.body.password;
@@ -191,27 +188,31 @@ exports.postNewPassword = (req, res, next) => {
   let _user;
 
   User.findOne({
-      resetToken: token,
-      resetTokenExpiration: {
-          $gt: Date.now()
-      },
-      _id: userId
-  }).then(user => {
+    resetToken: token,
+    resetTokenExpiration: {
+      $gt: Date.now(),
+    },
+    _id: userId,
+  })
+    .then((user) => {
       _user = user;
       return bcrypt.hash(newPassword, 10);
-  }).then(hashedPassword => {
+    })
+    .then((hashedPassword) => {
       _user.password = hashedPassword;
       _user.resetToken = undefined;
       _user.resetTokenExpiration = undefined;
       return _user.save();
-  }).then(() => {
+    })
+    .then(() => {
       res.redirect('/login');
-  }).catch(err => { console.log(err) });
-}
+    })
+    .catch((err) => console.log(err));
+};
 
 exports.getLogout = (req, res, next) => {
-  req.session.destroy(err => {
-      console.log(err);
-      res.redirect('/');
+  req.session.destroy((err) => {
+    if (err) console.log(err);
+    res.redirect('/');
   });
-}
+};

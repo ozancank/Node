@@ -101,9 +101,7 @@ exports.postCart = (req, res, next) => {
     .then(() => {
       res.redirect('/cart');
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.postCartItemDelete = (req, res, next) => {
@@ -114,9 +112,7 @@ exports.postCartItemDelete = (req, res, next) => {
     .then(() => {
       res.redirect('/cart');
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 };
 
 exports.getOrders = (req, res, next) => {
