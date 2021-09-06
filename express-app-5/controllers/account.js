@@ -98,7 +98,7 @@ exports.postRegister = (req, res, next) => {
 
             sgMail.send(msg);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err.message));
 };
 
 exports.getReset = (req, res, next) => {

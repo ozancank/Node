@@ -4,6 +4,8 @@ block styles
   link(rel="stylesheet" href="/css/forms.css")
 
 block content
+  if errorMessage
+    div.alert.alert-danger !{errorMessage}
   form(action='/admin/add-product' method='POST')
     input(type="hidden" name="_csrf" value=`${csrfToken}`)
     .form-group.row.mb-3
@@ -19,12 +21,13 @@ block content
       .col-sm-10
         input#imageUrl.form-control(type='text' name='imageUrl')
     .form-group.row.mb-3
-      label.col-sm-2.form-label(for='categoryId') Category
-      .col-sm-10
-        each category in categories 
-          .form-check 
-            input.form-check-input(type="checkbox" name="categoryIds" value=`${category._id}`)
-            label.form-check-label #{category.name}      
+      if(categories)
+        label.col-sm-2.form-label(for='categoryId') Category
+        .col-sm-10
+          each category in categories 
+            .form-check 
+              input.form-check-input(type="checkbox" name="categoryIds" value=`${category._id}`)
+              label.form-check-label #{category.name}      
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='description') Description
       .col-sm-10

@@ -44,6 +44,7 @@ exports.postAddProduct = (req, res, next) => {
         description: description,
         userId: req.user,
         categoryIds: categoryIds,
+        tags: ['deneme', 'etiket'],
         isActive: true,
     });
 
@@ -52,7 +53,20 @@ exports.postAddProduct = (req, res, next) => {
         .then(() => {
             res.redirect('/admin/products?action=create');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            let message = '';
+            if (err.name == 'ValidationError') {
+                for (field in err.errors) {
+                    message += err.errors[field].message + '<br>';
+                }
+            }
+
+            res.render('admin/add-product', {
+                title: 'New Product',
+                path: '/admin/add-product',
+                errorMessage: message,
+            });
+        });
 };
 
 exports.getEditProduct = (req, res, next) => {
