@@ -1,6 +1,6 @@
 const Product = require('../models/product');
 const Category = require('../models/category');
-const { populate } = require('../models/product');
+//const mongoose = require('mongoose');
 
 //Product
 exports.getProducts = (req, res, next) => {
@@ -38,6 +38,7 @@ exports.postAddProduct = (req, res, next) => {
     const categoryIds = req.body.categoryIds;
 
     const product = new Product({
+        //_id: new mongoose.Types.ObjectId('61288de21cd85a99fb475d7d'),
         name: name,
         price: price,
         imageUrl: imageUrl,
@@ -54,18 +55,28 @@ exports.postAddProduct = (req, res, next) => {
             res.redirect('/admin/products?action=create');
         })
         .catch((err) => {
-            let message = '';
             if (err.name == 'ValidationError') {
+                let message = '';
                 for (field in err.errors) {
                     message += err.errors[field].message + '<br>';
                 }
-            }
 
-            res.render('admin/add-product', {
-                title: 'New Product',
-                path: '/admin/add-product',
-                errorMessage: message,
-            });
+                res.render('admin/add-product', {
+                    title: 'New Product',
+                    path: '/admin/add-product',
+                    errorMessage: message,
+                });
+            } else {
+                // res.status(500).render('admin/add-product', {
+                //     title: 'New Product',
+                //     path: '/admin/add-product',
+                //     errorMessage: 'Beklenmedik bir hata oluştu.',
+                // });
+
+                //res.redirect('/500');
+
+                next(err);
+            }
         });
 };
 

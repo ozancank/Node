@@ -19,36 +19,36 @@ app.set('views', './views');
 
 const ConnectionString = `mongodb+srv://ozancan1:${passwd.mongoDbAtlas}@cluster0.afkna.mongodb.net/node-app-orm?retryWrites=true&w=majority`;
 const store = new mongoDbStore({
-  uri: ConnectionString,
-  collection: 'mySessions',
+    uri: ConnectionString,
+    collection: 'mySessions',
 });
 
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
-  session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      maxAge: 3600000,
-    },
-    store: store,
-  })
+    session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 3600000,
+        },
+        store: store,
+    })
 );
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  if (!req.session.user) {
-    return next();
-  }
+    if (!req.session.user) {
+        return next();
+    }
 
-  User.findById(req.session.user._id)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
+    User.findById(req.session.user._id)
+        .then((user) => {
+            req.user = user;
+            next();
+        })
+        .catch((err) => console.log(err));
 });
 app.use(csurf());
 
@@ -56,12 +56,16 @@ app.use('/admin', adminRoutes);
 app.use(userRoutes);
 app.use(accountRoutes);
 
+app.use('/500', errorController.get500Page);
 app.use(errorController.get404Page);
+app.use((error, req, res, next) => {
+    res.status(500).render('error/500', { title: 'Error' });
+});
 
 mongoose
-  .connect(ConnectionString)
-  .then(() => {
-    console.log('connected to mongodb');
-    app.listen(3000);
-  })
-  .catch((err) => console.log(err));
+    .connect(ConnectionString)
+    .then(() => {
+        console.log('connected to mongodb');
+        app.listen(3000);
+    })
+    .catch((err) => console.log(err));
