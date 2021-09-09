@@ -1,26 +1,26 @@
 {
-  "name": "express-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@sendgrid/mail": "^7.4.6",
-    "bcrypt": "^5.0.1",
-    "connect-mongodb-session": "^3.1.0",
-    "cookie-parser": "^1.4.5",
-    "csurf": "^1.11.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.2",
-    "mongodb": "^4.1.1",
-    "mongoose": "^6.0.4",
-    "pug": "^3.0.2",
-    "validator": "^13.6.0"
-  }
+    "name": "express-app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@sendgrid/mail": "^7.4.6",
+        "bcrypt": "^5.0.1",
+        "connect-mongodb-session": "^3.1.0",
+        "cookie-parser": "^1.4.5",
+        "csurf": "^1.11.0",
+        "express": "^4.17.1",
+        "express-session": "^1.17.2",
+        "mongodb": "^4.1.1",
+        "mongoose": "^6.0.5",
+        "pug": "^3.0.2",
+        "validator": "^13.6.0"
+    }
 }
