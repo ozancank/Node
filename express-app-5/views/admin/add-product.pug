@@ -6,7 +6,7 @@ block styles
 block content
   if errorMessage
     div.alert.alert-danger !{errorMessage}
-  form(action='/admin/add-product' method='POST')
+  form(action='/admin/add-product' method='POST' enctype="multipart/form-data")
     input(type="hidden" name="_csrf" value=`${csrfToken}`)
     .form-group.row.mb-3
       label.col-sm-2.form-label(for='name') Product Name
@@ -17,9 +17,9 @@ block content
       .col-sm-10
         input#price.form-control(type='text' name='price')
     .form-group.row.mb-3
-      label.col-sm-2.form-label(for='imageUrl') Image
+      label.col-sm-2.form-label(for='image') Image
       .col-sm-10
-        input#imageUrl.form-control(type='text' name='imageUrl')
+        input#image.form-control(type='file' name='image')
     .form-group.row.mb-3
       if(categories)
         label.col-sm-2.form-label(for='categoryId') Category

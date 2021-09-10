@@ -5,7 +5,7 @@ block styles
 
 block content
     if errorMessage 
-        .alert.alert-danger.col-sm-12 #{errorMessage}
+        .alert.alert-danger.col-sm-12 !{errorMessage}
     form(action='/register' method='POST')
         input(type="hidden" name="_csrf" value=`${csrfToken}`)
         .form-group.row.mb-3

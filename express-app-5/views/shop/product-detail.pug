@@ -3,7 +3,7 @@ extends ../layouts/main-layout.pug
 block content
     .row
         .col-3
-            img(src=`${product.imageUrl}` alt=`${product.description}`).img-fluid
+            img(src=`/img/${product.imageUrl}` alt=`${product.description}`).img-fluid
         .col-9.ps-3   
             h1.mb-3 #{product.name}
             hr

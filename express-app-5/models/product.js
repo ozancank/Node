@@ -18,7 +18,7 @@ const productSchema = mongoose.Schema({
         set: (value) => Math.round(value),
     },
     description: { type: String, minlength: 10 },
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String },
     date: {
         type: Date,
         default: Date.now,

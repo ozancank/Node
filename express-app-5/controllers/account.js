@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Login = require('../models/login');
 const bcrypt = require('bcrypt');
 const sgMail = require('@sendgrid/mail');
 const passwd = require('../passwd');
@@ -20,33 +21,60 @@ exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    User.findOne({ email: email })
-        .then((user) => {
-            if (!user) {
-                req.session.errorMessage =
-                    'Bu mail adresi ile bir kayıt bulunamamıştır.';
-                req.session.save(function () {
-                    return res.redirect('/login');
+    const loginModel = new Login({
+        email: email,
+        password: password,
+    });
+
+    loginModel
+        .validate()
+        .then(() => {
+            User.findOne({ email: email })
+                .then((user) => {
+                    if (!user) {
+                        req.session.errorMessage =
+                            'Bu mail adresi ile bir kayıt bulunamamıştır.';
+                        req.session.save(function () {
+                            return res.redirect('/login');
+                        });
+                    } else {
+                        bcrypt
+                            .compare(password, user.password)
+                            .then((isSuccess) => {
+                                if (isSuccess) {
+                                    req.session.user = user;
+                                    req.session.isAuthenticated = true;
+                                    return req.session.save(function (err) {
+                                        var url = req.session.redirectTo || '/';
+                                        delete req.session.redirectTo;
+                                        res.redirect(url);
+                                    });
+                                }
+                                req.session.errorMessage =
+                                    'hatalı email veya parola girdiniz.';
+                                req.session.save(() => res.redirect('/login'));
+                            })
+                            .catch((err) => console.log(err));
+                    }
+                })
+                .catch((err) => console.log(err));
+        })
+        .catch((err) => {
+            if (err.name == 'ValidationError') {
+                let message = '';
+                for (field in err.errors) {
+                    message += err.errors[field].message + '<br>';
+                }
+
+                res.render('account/login', {
+                    path: '/login',
+                    title: 'Login',
+                    errorMessage: message,
                 });
             } else {
-                bcrypt
-                    .compare(password, user.password)
-                    .then((isSuccess) => {
-                        if (isSuccess) {
-                            req.session.user = user;
-                            req.session.isAuthenticated = true;
-                            return req.session.save(function (err) {
-                                var url = req.session.redirectTo || '/';
-                                delete req.session.redirectTo;
-                                res.redirect(url);
-                            });
-                        }
-                        res.redirect('/login');
-                    })
-                    .catch((err) => console.log(err));
+                next(err);
             }
-        })
-        .catch((err) => console.log(err));
+        });
 };
 
 exports.getRegister = (req, res, next) => {
@@ -98,7 +126,22 @@ exports.postRegister = (req, res, next) => {
 
             sgMail.send(msg);
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+            if (err.name == 'ValidationError') {
+                let message = '';
+                for (field in err.errors) {
+                    message += err.errors[field].message + '<br>';
+                }
+
+                res.render('account/register', {
+                    path: '/register',
+                    title: 'Register',
+                    errorMessage: message,
+                });
+            } else {
+                next(err);
+            }
+        });
 };
 
 exports.getReset = (req, res, next) => {
@@ -153,7 +196,22 @@ exports.postReset = (req, res, next) => {
                 };
                 sgMail.send(msg);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                if (err.name == 'ValidationError') {
+                    let message = '';
+                    for (field in err.errors) {
+                        message += err.errors[field].message + '<br>';
+                    }
+
+                    res.render('account/reset', {
+                        path: '/reset-password',
+                        title: 'Reset Password',
+                        errorMessage: message,
+                    });
+                } else {
+                    next(err);
+                }
+            });
     });
 };
 
@@ -178,7 +236,9 @@ exports.getNewPassword = (req, res, next) => {
                 passwordToken: token,
             });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.postNewPassword = (req, res, next) => {
@@ -207,7 +267,9 @@ exports.postNewPassword = (req, res, next) => {
         .then(() => {
             res.redirect('/login');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.getLogout = (req, res, next) => {

@@ -15,7 +15,9 @@ exports.getProducts = (req, res, next) => {
                 action: req.query.action,
             });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.getAddProduct = (req, res, next) => {
@@ -27,21 +29,38 @@ exports.getAddProduct = (req, res, next) => {
                 categories: categories,
             });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.postAddProduct = (req, res, next) => {
     const name = req.body.name;
     const price = req.body.price;
-    const imageUrl = req.body.imageUrl;
+    const image = req.file;
     const description = req.body.description;
     const categoryIds = req.body.categoryIds;
+
+    if (!image) {
+        return Category.find()
+            .then((categories) => {
+                res.render('admin/add-product', {
+                    title: 'New Product',
+                    path: '/admin/add-product',
+                    categories: categories,
+                    errorMessage: 'Lütfen bir resim seçiniz',
+                });
+            })
+            .catch((err) => {
+                next(err);
+            });
+    }
 
     const product = new Product({
         //_id: new mongoose.Types.ObjectId('61288de21cd85a99fb475d7d'),
         name: name,
         price: price,
-        imageUrl: imageUrl,
+        imageUrl: image.filename,
         description: description,
         userId: req.user,
         categoryIds: categoryIds,
@@ -109,33 +128,40 @@ exports.getEditProduct = (req, res, next) => {
                 });
             });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.postEditProduct = (req, res, next) => {
     const id = req.body.id;
     const name = req.body.name;
     const price = req.body.price;
-    const imageUrl = req.body.imageUrl;
+    const image = req.file;
     const description = req.body.description;
     const categoryIds = req.body.categoryIds;
 
-    Product.updateOne(
-        { _id: id, userId: req.user._id },
-        {
-            $set: {
-                name: name,
-                price: price,
-                imageUrl: imageUrl,
-                description: description,
-                categories: categoryIds,
-            },
-        }
-    )
+    const product = {
+        name: name,
+        price: price,
+        description: description,
+        categories: categoryIds,
+    };
+
+    if (image) {
+        product.imageUrl = image.filename;
+    }
+
+    Product.findOne({ _id: id, userId: req.user._id });
+
+    /*
+    Product.updateOne({ _id: id, userId: req.user._id }, { $set: product })
         .then(() => {
             res.redirect('/admin/products?action=edit');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });*/
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -147,7 +173,9 @@ exports.postDeleteProduct = (req, res, next) => {
             }
             res.redirect('/admin/products?action=delete');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 //Category
@@ -161,7 +189,9 @@ exports.getCategories = (req, res, next) => {
                 action: req.query.action,
             });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.getAddCategory = (req, res, next) => {
@@ -185,7 +215,9 @@ exports.postAddCategory = (req, res, next) => {
         .then(() => {
             res.redirect('/admin/categories?action=create');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.getEditCategory = (req, res, next) => {
@@ -197,7 +229,9 @@ exports.getEditCategory = (req, res, next) => {
                 category: category,
             });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.postEditCategory = (req, res, next) => {
@@ -217,7 +251,9 @@ exports.postEditCategory = (req, res, next) => {
         .then(() => {
             res.redirect('/admin/categories?action=edit');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };
 
 exports.postDeleteCategory = (req, res, next) => {
@@ -226,5 +262,7 @@ exports.postDeleteCategory = (req, res, next) => {
         .then(() => {
             res.redirect('/admin/categories?action=delete');
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            next(err);
+        });
 };

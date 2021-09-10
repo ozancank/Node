@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mongoDbStore = require('connect-mongodb-session')(session);
 const csurf = require('csurf');
+const multer = require('multer');
 
 const passwd = require('./passwd');
 const User = require('./models/user');
@@ -23,7 +24,20 @@ const store = new mongoDbStore({
     collection: 'mySessions',
 });
 
+const storage = multer.diskStorage({
+    destination: function (req, res, cb) {
+        cb(null, './public/img');
+    },
+    filename: function (req, file, cb) {
+        cb(
+            null,
+            file.fieldname + '-' + Date.now() + path.extname(file.originalname)
+        );
+    },
+});
+
 app.use(express.urlencoded({ extended: false }));
+app.use(multer({ storage: storage }).single('image'));
 app.use(cookieParser());
 app.use(
     session({
